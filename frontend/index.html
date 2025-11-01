@@ -1,0 +1,713 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ProtectLyfe - Your Insurance PAL</title>
+    <style>
+        /* ========================================
+           GLOBAL STYLES - Basic page setup
+           ======================================== */
+        
+        /* Remove default margins and set font */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        /* Body: Full screen, no background gradient */
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+                'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+            background: #ffffff;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* ========================================
+           CHAT CONTAINER - Main chat box (full screen on mobile)
+           ======================================== */
+        
+        .chat-container {
+            width: 100%;
+            max-width: 450px;
+            height: 100vh;
+            background: white;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        /* ========================================
+           HEADER - Orange header with branding
+           ======================================== */
+        
+        .chat-header {
+            background: #FF6B35; /* Bright orange color */
+            color: white;
+            padding: 20px 20px 15px 20px;
+            text-align: center;
+        }
+
+        /* Main title "ProtectLyfe" */
+        .chat-header h1 {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 4px;
+            letter-spacing: 0.5px;
+        }
+
+        /* Subtitle "Your Insurance PAL" */
+        .chat-header .subtitle {
+            font-size: 14px;
+            opacity: 0.95;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 4px;
+        }
+
+        /* Orange heart emoji */
+        .chat-header .heart {
+            color: #FF6B35;
+            filter: brightness(1.2);
+        }
+
+        /* ========================================
+           MESSAGES AREA - White background for messages
+           ======================================== */
+        
+        .messages-container {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            background: #ffffff;
+        }
+
+        /* Individual message wrapper */
+        .message {
+            display: flex;
+            flex-direction: column;
+            max-width: 75%;
+            animation: fadeIn 0.3s ease-in;
+        }
+
+        /* User messages align to right */
+        .message.user {
+            align-self: flex-end;
+        }
+
+        /* Bot messages align to left */
+        .message.bot {
+            align-self: flex-start;
+        }
+
+        /* Message content container (avatar + bubble) */
+        .message-content {
+            display: flex;
+            align-items: flex-end;
+            gap: 8px;
+        }
+
+        /* ========================================
+           AVATARS - Circular avatars with letters
+           ======================================== */
+        
+        /* Avatar container - circular with letter */
+        .message-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            font-weight: 600;
+            flex-shrink: 0;
+            color: white;
+        }
+
+        /* User avatar - blue background with white "U" */
+        .message.user .message-avatar {
+            background: #4285F4; /* Blue color */
+        }
+
+        /* Bot avatar - orange background with white "P" */
+        .message.bot .message-avatar {
+            background: #FF6B35; /* Orange color */
+        }
+
+        /* ========================================
+           MESSAGE BUBBLES - Rounded rectangles
+           ======================================== */
+        
+        .message-bubble {
+            padding: 12px 16px;
+            border-radius: 16px;
+            word-wrap: break-word;
+            line-height: 1.5;
+        }
+
+        /* User message bubble - orange background with white text */
+        .message.user .message-bubble {
+            background: #FF6B35; /* Orange background */
+            color: white;
+            border-bottom-right-radius: 4px;
+        }
+
+        /* Bot message bubble - white background with dark grey text */
+        .message.bot .message-bubble {
+            background: white;
+            color: #333333; /* Dark grey text */
+            border: 1px solid #E0E0E0;
+            border-bottom-left-radius: 4px;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+        }
+
+        /* Quick suggestion buttons (optional - can be styled if needed) */
+        .suggestions {
+            display: none; /* Hide suggestions to match design */
+        }
+
+        /* Paragraph text inside bubbles */
+        .message-bubble p {
+            margin: 0;
+            font-size: 15px;
+        }
+
+        /* ========================================
+           BUY NOW BUTTON - Orange button in bot messages
+           ======================================== */
+        
+        .buy-now-btn {
+            margin-top: 10px;
+            padding: 10px 20px;
+            background: #FF6B35; /* Orange background */
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s;
+            width: 100%;
+        }
+
+        .buy-now-btn:hover {
+            background: #E55A2B; /* Darker orange on hover */
+        }
+
+        /* ========================================
+           INPUT AREA - Bottom input field
+           ======================================== */
+        
+        .input-container {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 16px;
+            background: white;
+            border-top: 1px solid #E0E0E0;
+        }
+
+        /* File upload button - hidden */
+        #fileInput {
+            display: none;
+        }
+
+        /* Attachment button (optional - can be hidden if not needed) */
+        .attach-btn {
+            display: none; /* Hide for now to match design */
+        }
+
+        /* Text input field - rounded with light grey background */
+        .chat-input {
+            flex: 1;
+            padding: 12px 16px;
+            border: 1px solid #4285F4; /* Blue border */
+            border-radius: 24px;
+            font-size: 15px;
+            outline: none;
+            background: #FAFAFA; /* Light grey background */
+            transition: border-color 0.2s;
+        }
+
+        .chat-input::placeholder {
+            color: #999999; /* Light grey placeholder text */
+        }
+
+        .chat-input:focus {
+            border-color: #4285F4;
+            background: white;
+        }
+
+        /* Send button - orange background */
+        .send-btn {
+            background: #FF6B35; /* Orange background */
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 24px;
+            cursor: pointer;
+            transition: background 0.2s;
+            font-size: 15px;
+            font-weight: 600;
+        }
+
+        .send-btn:hover {
+            background: #E55A2B; /* Darker orange on hover */
+        }
+
+        .send-btn:active {
+            transform: scale(0.95);
+        }
+
+        /* ========================================
+           TYPING INDICATOR - Shows when bot is thinking
+           ======================================== */
+        
+        .typing-indicator {
+            display: none;
+            padding: 12px 16px;
+            background: white;
+            border-radius: 16px;
+            border: 1px solid #E0E0E0;
+            max-width: 60px;
+            align-self: flex-start;
+        }
+
+        .typing-indicator.show {
+            display: block;
+        }
+
+        .typing-dots {
+            display: flex;
+            gap: 4px;
+        }
+
+        .typing-dot {
+            width: 8px;
+            height: 8px;
+            background: #999;
+            border-radius: 50%;
+            animation: typing 1.4s infinite;
+        }
+
+        .typing-dot:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+
+        .typing-dot:nth-child(3) {
+            animation-delay: 0.4s;
+        }
+
+        @keyframes typing {
+            0%, 60%, 100% {
+                transform: translateY(0);
+            }
+            30% {
+                transform: translateY(-10px);
+            }
+        }
+
+        /* ========================================
+           ANIMATIONS - Smooth fade-in for messages
+           ======================================== */
+        
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* ========================================
+           SCROLLBAR - Custom scrollbar styling
+           ======================================== */
+        
+        .messages-container::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .messages-container::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+
+        .messages-container::-webkit-scrollbar-thumb {
+            background: #ccc;
+            border-radius: 3px;
+        }
+
+        .messages-container::-webkit-scrollbar-thumb:hover {
+            background: #999;
+        }
+
+        /* ========================================
+           RESPONSIVE DESIGN - Mobile optimization
+           ======================================== */
+        
+        @media (max-width: 768px) {
+            .chat-container {
+                max-width: 100%;
+                border-radius: 0;
+            }
+
+            .message {
+                max-width: 80%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- ========================================
+         MAIN CHAT CONTAINER
+         ======================================== -->
+    
+    <div class="chat-container">
+        <!-- Header with ProtectLyfe branding -->
+        <div class="chat-header">
+            <h1>ProtectLyfe</h1>
+            <div class="subtitle">
+                Your Insurance PAL
+                <span class="heart">🧡</span>
+            </div>
+        </div>
+
+        <!-- Messages area - where chat messages appear -->
+        <div class="messages-container" id="messagesContainer">
+            <!-- Messages will be added here by JavaScript -->
+        </div>
+
+        <!-- Typing indicator (shows when bot is "thinking") -->
+        <div class="typing-indicator" id="typingIndicator">
+            <div class="typing-dots">
+                <div class="typing-dot"></div>
+                <div class="typing-dot"></div>
+                <div class="typing-dot"></div>
+            </div>
+        </div>
+
+        <!-- Input area - where user types and sends messages -->
+        <div class="input-container">
+            <!-- Hidden file input for document uploads -->
+            <input type="file" id="fileInput" accept=".pdf,.docx,.jpg,.png" onchange="handleFileUpload(event)">
+            
+            <!-- Text input field -->
+            <input 
+                type="text" 
+                class="chat-input" 
+                id="messageInput" 
+                placeholder="Type a message..."
+                onkeypress="handleKeyPress(event)"
+            />
+
+            <!-- Send button -->
+            <button class="send-btn" onclick="sendMessage()">Send</button>
+        </div>
+    </div>
+
+    <script>
+        /* ========================================
+           GLOBAL VARIABLES - Store chat state
+           ======================================== */
+        
+        // Unique ID for this user session (generated when page loads)
+        const userId = `user_${Date.now()}`;
+        
+        // API base URL (backend server running on port 8000)
+        const API_BASE = 'http://localhost:8000/api';
+        
+        // Current conversation persona (default: travel_guru)
+        let currentPersona = 'travel_guru';
+        
+        // Track if conversation has started
+        let conversationStarted = false;
+
+        /* ========================================
+           INITIALIZATION - Start chat when page loads
+           ======================================== */
+        
+        // When page finishes loading, start the conversation
+        window.addEventListener('DOMContentLoaded', function() {
+            startConversation();
+        });
+
+        /* ========================================
+           START CONVERSATION - Get initial greeting from bot
+           ======================================== */
+        
+        async function startConversation() {
+            try {
+                // Call backend API to start conversation session
+                const response = await fetch(
+                    `${API_BASE}/conversation/start?user_id=${userId}&persona=${currentPersona}`
+                );
+                
+                // Get the response data (JSON)
+                const data = await response.json();
+                
+                // Display bot's greeting message in chat
+                addMessage('bot', data.message, data.suggestions || []);
+                
+                // Mark conversation as started
+                conversationStarted = true;
+            } catch (error) {
+                // If API fails, show default greeting message
+                console.error('Error starting conversation:', error);
+                addMessage('bot', "Hi! I'm your insurance assistant. How can I help you today?", [
+                    "Get a quote",
+                    "Compare policies",
+                    "Ask about coverage"
+                ]);
+                conversationStarted = true;
+            }
+        }
+
+        /* ========================================
+           SEND MESSAGE - Send user message and get bot response
+           ======================================== */
+        
+        async function sendMessage() {
+            // Get the text input element
+            const inputElement = document.getElementById('messageInput');
+            
+            // Get the message text and remove extra spaces
+            const message = inputElement.value.trim();
+            
+            // Don't send if message is empty
+            if (!message) return;
+            
+            // Clear the input field
+            inputElement.value = '';
+            
+            // Display user's message in chat immediately
+            addMessage('user', message);
+            
+            // Show typing indicator (bot is "thinking")
+            showTypingIndicator();
+            
+            try {
+                // Send message to backend API
+                const response = await fetch(
+                    `${API_BASE}/conversation/message?user_id=${userId}&message=${encodeURIComponent(message)}&use_qa=true`
+                );
+                
+                // Get bot's response
+                const data = await response.json();
+                
+                // Hide typing indicator
+                hideTypingIndicator();
+                
+                // Display bot's response in chat
+                addMessage('bot', data.message, data.suggestions || []);
+                
+            } catch (error) {
+                // Hide typing indicator on error
+                hideTypingIndicator();
+                
+                // Show error message to user
+                console.error('Error sending message:', error);
+                addMessage('bot', "Sorry, I encountered an error. Please try again.", []);
+            }
+        }
+
+        /* ========================================
+           ADD MESSAGE - Display message in chat area
+           ======================================== */
+        
+        function addMessage(type, text, suggestions = []) {
+            // Get the messages container element
+            const messagesContainer = document.getElementById('messagesContainer');
+            
+            // Create a new div for this message
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${type}`; // Add class: "message user" or "message bot"
+            
+            // Create container for message content (avatar + bubble)
+            const contentDiv = document.createElement('div');
+            contentDiv.className = 'message-content';
+            
+            // Create avatar element
+            const avatarDiv = document.createElement('div');
+            avatarDiv.className = 'message-avatar';
+            
+            // Bot messages: avatar on LEFT before bubble
+            if (type === 'bot') {
+                avatarDiv.textContent = 'P'; // "P" for ProtectLyfe/PAL
+                contentDiv.appendChild(avatarDiv); // Add avatar first (left side)
+            }
+            
+            // Create message bubble
+            const bubbleDiv = document.createElement('div');
+            bubbleDiv.className = 'message-bubble';
+            
+            // Add message text inside a paragraph
+            const textParagraph = document.createElement('p');
+            textParagraph.textContent = text; // Use textContent to safely display text
+            bubbleDiv.appendChild(textParagraph);
+            
+            // Add "Buy Now" button if message contains quote/plan info (optional)
+            // You can customize when to show this button
+            if (type === 'bot' && (text.toLowerCase().includes('plan') || text.toLowerCase().includes('quote') || text.toLowerCase().includes('coverage'))) {
+                const buyButton = document.createElement('button');
+                buyButton.className = 'buy-now-btn';
+                buyButton.textContent = 'Buy Now';
+                buyButton.onclick = function() {
+                    // Handle buy now click - you can customize this
+                    addMessage('user', 'I want to buy this plan');
+                    sendMessage();
+                };
+                bubbleDiv.appendChild(buyButton);
+            }
+            
+            // Add quick suggestion buttons if provided (only for bot messages)
+            if (type === 'bot' && suggestions.length > 0) {
+                const suggestionsDiv = document.createElement('div');
+                suggestionsDiv.className = 'suggestions';
+                
+                // Create a button for each suggestion
+                suggestions.forEach(suggestion => {
+                    const btn = document.createElement('button');
+                    btn.className = 'suggestion-btn';
+                    btn.textContent = suggestion;
+                    btn.onclick = () => {
+                        // When suggestion clicked, put it in input and send
+                        document.getElementById('messageInput').value = suggestion;
+                        sendMessage();
+                    };
+                    suggestionsDiv.appendChild(btn);
+                });
+                
+                bubbleDiv.appendChild(suggestionsDiv);
+            }
+            
+            // Add bubble to content container
+            contentDiv.appendChild(bubbleDiv);
+            
+            // User messages: avatar on RIGHT after bubble
+            if (type === 'user') {
+                avatarDiv.textContent = 'U'; // "U" for User
+                contentDiv.appendChild(avatarDiv); // Add avatar after bubble (right side)
+            }
+            
+            // Assemble the message: add content to message div
+            messageDiv.appendChild(contentDiv);
+            
+            // Add message to the messages container
+            messagesContainer.appendChild(messageDiv);
+            
+            // Automatically scroll to show the latest message
+            scrollToBottom();
+        }
+
+        /* ========================================
+           HANDLE FILE UPLOAD - Upload travel document
+           ======================================== */
+        
+        async function handleFileUpload(event) {
+            // Get the selected file
+            const file = event.target.files[0];
+            if (!file) return;
+            
+            // Show message that file is being uploaded
+            addMessage('user', `Uploaded: ${file.name}`);
+            showTypingIndicator();
+            
+            try {
+                // Create form data to send file
+                const formData = new FormData();
+                formData.append('file', file);
+                
+                // Send file to backend API for extraction
+                const response = await fetch(`${API_BASE}/document/extract`, {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                // Get extraction results
+                const data = await response.json();
+                hideTypingIndicator();
+                
+                if (data.success) {
+                    // Show success message with extracted destination
+                    const destination = data.extracted_info.destination || 'destination';
+                    addMessage('bot', 
+                        `Great! I extracted your trip details from the document. Found ${destination}. Let me find the best insurance plans for you!`, 
+                        []
+                    );
+                } else {
+                    // Show error if extraction failed
+                    addMessage('bot', 'Sorry, I couldn\'t extract information from that document. Please try again or type your trip details.', []);
+                }
+                
+            } catch (error) {
+                // Hide typing indicator and show error
+                hideTypingIndicator();
+                console.error('Error uploading file:', error);
+                addMessage('bot', 'Error processing document. Please try again.', []);
+            }
+        }
+
+        /* ========================================
+           HANDLE KEY PRESS - Send message when Enter is pressed
+           ======================================== */
+        
+        function handleKeyPress(event) {
+            // If user presses Enter (without Shift), send the message
+            if (event.key === 'Enter' && !event.shiftKey) {
+                event.preventDefault(); // Prevent new line
+                sendMessage(); // Send the message
+            }
+        }
+
+        /* ========================================
+           SHOW/HIDE TYPING INDICATOR - Visual feedback
+           ======================================== */
+        
+        function showTypingIndicator() {
+            // Get typing indicator element
+            const indicator = document.getElementById('typingIndicator');
+            
+            // Add "show" class to make it visible
+            indicator.classList.add('show');
+            
+            // Add to messages container
+            const messagesContainer = document.getElementById('messagesContainer');
+            messagesContainer.appendChild(indicator);
+            
+            // Scroll to show typing indicator
+            scrollToBottom();
+        }
+
+        function hideTypingIndicator() {
+            // Get typing indicator element
+            const indicator = document.getElementById('typingIndicator');
+            
+            // Remove "show" class to hide it
+            indicator.classList.remove('show');
+        }
+
+        /* ========================================
+           SCROLL TO BOTTOM - Auto-scroll to latest message
+           ======================================== */
+        
+        function scrollToBottom() {
+            // Get messages container
+            const messagesContainer = document.getElementById('messagesContainer');
+            
+            // Scroll to the bottom (show latest messages)
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,18 @@
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Vector Database
+chroma_db/
+*.sqlite3
+*.db
+
+# Environment
+.env
+.env.local
+
+# Archive (old files)
+archive/
+

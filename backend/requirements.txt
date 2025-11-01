@@ -1,0 +1,31 @@
+# Policy Intelligence Engine - Dependencies
+# Document Processing (Optional - install separately if needed)
+# PyMuPDF==1.23.14  # Fast PDF extraction (requires Visual Studio on Windows)
+python-docx==1.1.0  # Word document processing
+# unstructured==0.11.8  # Advanced document extraction (optional)
+# pdfminer.six==20221105  # Alternative PDF parser (optional)
+# pytesseract==0.3.10  # OCR for scanned documents (optional)
+Pillow==10.2.0  # Image processing for OCR
+
+# Embeddings & Vector Database
+chromadb==0.4.22  # Vector database for storing embeddings
+sentence-transformers==2.3.1  # Local embeddings (no API needed)
+torch==2.1.2  # Required for sentence-transformers
+
+# LLM & AI
+ollama==0.1.7  # Local LLM via Ollama
+langchain==0.1.7  # RAG framework
+langchain-community==0.0.20  # Community integrations for LangChain
+tiktoken==0.5.2  # Token counting
+
+# API Framework
+fastapi==0.109.0  # Modern API framework
+uvicorn==0.27.0  # ASGI server
+python-multipart==0.0.6  # File uploads
+
+# Utilities
+python-dotenv==1.0.1  # Environment variables
+pydantic==2.6.1  # Data validation
+numpy==1.26.3  # Numerical operations
+pandas==2.2.0  # Data manipulation for comparisons
+
